@@ -13,7 +13,10 @@
         }
     },
     "extra": {
-        "class": "Axelerant\\DbDocker\\Plugin"
+        "class": "Axelerant\\DbDocker\\Plugin",
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
     },
     "authors": [
         {
