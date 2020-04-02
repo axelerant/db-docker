@@ -1,0 +1,32 @@
+{
+    "name": "axelerant/db-docker",
+    "description": "Support tools for Database as docker images.",
+    "type": "composer-plugin",
+    "license": "MIT",
+    "require": {
+        "composer-plugin-api": "^1.1",
+        "cypresslab/gitelephant": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Axelerant\\DbDocker\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "Axelerant\\DbDocker\\Plugin"
+    },
+    "authors": [
+        {
+            "name": "hw",
+            "email": "hussainweb@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    },
+    "require-dev": {
+        "composer/composer": "^1.0"
+    }
+}
