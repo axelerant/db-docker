@@ -22,7 +22,9 @@ composer require --dev axelerant/db-docker
 
 ## Usage
 
-```
+```bash
+$ composer db-docker --help
+
 Usage:
   db-docker [options]
 
