@@ -114,7 +114,7 @@ class DbDockerCommand extends BaseCommand
     protected function getDbFile(): string
     {
         $src = $this->input->getOption('db-source') ?: $this->guessSource();
-        if ($src != 'lando' && $src != 'drush' && $src == 'file') {
+        if ($src != 'lando' && $src != 'drush' && $src != 'file') {
             throw new InvalidOptionException("db-source can only be 'lando', 'drush', or 'file'");
         }
 
