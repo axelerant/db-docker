@@ -108,7 +108,7 @@ class DbDockerCommand extends BaseCommand
                 throw new InvalidOptionException("The specified git remote URL isn't supported");
         }
 
-        return sprintf("%s/%s/db:%s", $registryDomain, $path, $tag);
+        return sprintf("%s/%s/db:%s", $registryDomain, strtolower($path), $tag);
     }
 
     protected function getDbFile(): string
