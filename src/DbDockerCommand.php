@@ -27,15 +27,15 @@ class DbDockerCommand extends BaseCommand
     {
         $this->setName('db-docker')
             ->setDescription('Generate a Docker image for the database.')
-            ->addOption('docker-tag', 'tag', InputOption::VALUE_OPTIONAL,
+            ->addOption('docker-tag', 't', InputOption::VALUE_OPTIONAL,
                 'The Docker tag to build')
-            ->addOption('git-remote', 'remote', InputOption::VALUE_OPTIONAL,
+            ->addOption('git-remote', 'r', InputOption::VALUE_OPTIONAL,
                 'The git remote to use to determine the image name', 'origin')
-            ->addOption('db-source', 'src', InputOption::VALUE_OPTIONAL,
+            ->addOption('db-source', 's', InputOption::VALUE_OPTIONAL,
                 'Source of the database ("lando", "drush", or "file")')
-            ->addOption('db-file', 'file', InputOption::VALUE_OPTIONAL,
+            ->addOption('db-file', 'f', InputOption::VALUE_OPTIONAL,
                 'The path to the database file (required if db-source is set to file)')
-            ->addOption('no-push', null, InputOption::VALUE_NONE,
+            ->addOption('no-push', 'n', InputOption::VALUE_NONE,
                 'Set to not push the image after building');
     }
 
