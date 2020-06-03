@@ -4,7 +4,7 @@
     "type": "composer-plugin",
     "license": "MIT",
     "require": {
-        "composer-plugin-api": "^1.1",
+        "composer-plugin-api": "^1.1 || ^2.0",
         "cypresslab/gitelephant": "^4.1"
     },
     "autoload": {
@@ -30,6 +30,6 @@
         "sort-packages": true
     },
     "require-dev": {
-        "composer/composer": "^1.0"
+        "composer/composer": "^2.0"
     }
 }
