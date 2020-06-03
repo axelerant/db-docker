@@ -35,7 +35,7 @@ class DbDockerCommand extends BaseCommand
                 'Source of the database ("lando", "drush", or "file")')
             ->addOption('db-file', 'f', InputOption::VALUE_OPTIONAL,
                 'The path to the database file (required if db-source is set to file)')
-            ->addOption('no-push', 'n', InputOption::VALUE_NONE,
+            ->addOption('no-push', NULL, InputOption::VALUE_NONE,
                 'Set to not push the image after building');
     }
 
