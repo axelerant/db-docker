@@ -163,13 +163,18 @@ class DbDockerCommand extends BaseCommand
      */
     protected function buildImage(string $imageId, string $sqlFile): void
     {
-        $repo = Repository::createFromRemote('git@gitlab.axl8.xyz:tooling/dockerize-db.git');
-        $repo_path = $repo->getPath();
-        copy($sqlFile, $repo_path . "/dumps/db.sql");
+        $tempDir = realpath(sys_get_temp_dir());
+        $tempPath = sprintf('%s%s%s', $tempDir, DIRECTORY_SEPARATOR, sha1(uniqid()));
+        $assetPath = __DIR__ . '/assets/dockerize-db/';
+
+        copy($assetPath . 'Dockerfile', $tempPath . 'Dockerfile');
+        mkdir($tempPath . 'dumps');
+        copy($sqlFile, $tempPath . "/dumps/db.sql");
+        copy($assetPath . "zzzz-truncate-caches.sql", $tempPath . "zzzz-truncate-caches.sql");
 
         $this->output->writeln(sprintf("<info>Building image '%s'</info>",
             $imageId));
-        $dockerCmd = sprintf("docker build -t %s %s", $imageId, $repo_path);
+        $dockerCmd = sprintf("docker build -t %s %s", $imageId, $tempPath);
         $this->execCmd($dockerCmd);
     }
 
