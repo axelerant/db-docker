@@ -9,8 +9,8 @@ This is a tool for Axelerant specific processes. As such, you wouldn't be able t
 
 * Reasonably updated version of composer with recent version of PHP. Tested with composer 1.10.1.
 * Recent version of Docker.
-* Ability to clone from gitlab.axl8.xyz.
-* Logged in to Axelerant's GitLab Container Registry. To verify, run `docker login registry.axl8.xyz`. Optional if you use the `--no-push` option.
+* Ability to clone from gitorious.xyz.
+* Logged in to Axelerant's GitLab Container Registry. To verify, run `docker login registry.gitorious.xyz`. Optional if you use the `--no-push` option.
 
 ## Installation
 
@@ -70,7 +70,7 @@ The plugin tries to guess most values for input to correctly select the source, 
 
 ### Determining the image name
 
-The image name is determined based on the git repository's `origin` remote (overridable using the `--git-remote` option). The remote URL should be a Git URL (not a HTTP URL) of type `git@gitlab.axl8.xyz:<group>/<project>.git`. For this, it would determine the image name `registry.axl8.xyz/<group>/<project>/db`. See the next section for the image tag.
+The image name is determined based on the git repository's `origin` remote (overridable using the `--git-remote` option). The remote URL should be a Git URL (not a HTTP URL) of type `git@gitorious.xyz:<group>/<project>.git`. For this, it would determine the image name `registry.gitorious.xyz/<group>/<project>/db`. See the next section for the image tag.
 
 ### Determining the image tag
 
