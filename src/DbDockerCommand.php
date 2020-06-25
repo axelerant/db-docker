@@ -84,8 +84,7 @@ class DbDockerCommand extends BaseCommand
         $remote = $git->getRemote($this->input->getOption('git-remote'));
 
         // Determine the image name (path) from the git remote URL.
-        $imageId = $this->getImagePathFromRepoUrl($remote->getFetchURL(), $tag);
-        return $imageId;
+        return $this->getImagePathFromRepoUrl($remote->getFetchURL(), $tag);
     }
 
     protected function getImagePathFromRepoUrl(string $url, string $tag): string
@@ -158,8 +157,6 @@ class DbDockerCommand extends BaseCommand
     /**
      * @param string $imageId
      * @param string $sqlFile
-     *
-     * @return string
      */
     protected function buildImage(string $imageId, string $sqlFile): void
     {
