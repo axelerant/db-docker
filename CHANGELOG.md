@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.0-beta7
+
+* Correctly determine paths when building images
+
 ## v1.0.0-beta6
 
 * Minor improvements
