@@ -64,7 +64,7 @@ class DbDockerCommand extends BaseCommand
 
     protected function getImageId(): string
     {
-        // TODO: See if this works in a subdirectory and if not, implement.
+        // We can safely use `getcwd()` even in a subdirectory.
         $git = new Repository(getcwd());
         $tag = $this->input->getOption('docker-tag');
         if (!$tag) {
