@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0-beta6
+
+* Minor improvements
+* Remove a TODO after testing
+* Move the dockerize-db Dockerfile and SQL inside the plugin
+
 ## v1.0.0-beta5
 
 * Remove shortcut for no-push
