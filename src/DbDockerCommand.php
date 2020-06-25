@@ -161,11 +161,12 @@ class DbDockerCommand extends BaseCommand
     protected function buildImage(string $imageId, string $sqlFile): void
     {
         $tempDir = realpath(sys_get_temp_dir());
-        $tempPath = sprintf('%s%s%s', $tempDir, DIRECTORY_SEPARATOR, sha1(uniqid()));
-        $assetPath = __DIR__ . '/assets/dockerize-db/';
+        $tempPath = sprintf('%s%s%s', $tempDir, DIRECTORY_SEPARATOR, sha1(uniqid())) . '/';
+        $assetPath = realpath(__DIR__ . '/../assets/dockerize-db') . '/';
 
-        copy($assetPath . 'Dockerfile', $tempPath . 'Dockerfile');
+        mkdir($tempPath);
         mkdir($tempPath . 'dumps');
+        copy($assetPath . 'Dockerfile', $tempPath . 'Dockerfile');
         copy($sqlFile, $tempPath . "/dumps/db.sql");
         copy($assetPath . "zzzz-truncate-caches.sql", $tempPath . "zzzz-truncate-caches.sql");
 
