@@ -80,7 +80,7 @@ class DbDockerCommand extends BaseCommand
 
         if (!$this->input->getOption('no-push')) {
             $this->output->writeln("<info>Pushing image...</info>");
-            $this->execCmd("docker push " . $imageId);
+            $this->execCmd(['docker', 'push', $imageId]);
         } else {
             $this->output->writeln(sprintf("<info>To push image, run '%s'</info>", "docker push " . $imageId));
         }
@@ -214,22 +214,36 @@ class DbDockerCommand extends BaseCommand
         copy($assetPath . "zzzz-truncate-caches.sql", $tempPath . "zzzz-truncate-caches.sql");
 
         $this->output->writeln("<info>Building image '{$imageId}'</info>");
-        $dockerCmd = sprintf("docker build -t %s %s", $imageId, $tempPath);
+        $dockerCmd = ['docker', 'build', '-t', $imageId, $tempPath];
         $this->execCmd($dockerCmd);
     }
 
     protected function execCmd($cmd): void
     {
-        $this->output->writeln("<info>Running '{$cmd}'</info>", OutputInterface::VERBOSITY_VERBOSE);
+        $this->output->writeln(sprintf(
+            "<info>Running '%s'</info>",
+            is_array($cmd) ? implode(" ", $cmd) : $cmd
+        ), OutputInterface::VERBOSITY_VERBOSE);
 
-        exec($cmd, $res, $code);
+        // BC for symfony/process < 4.2.
+        // The method fromShellCommandline is new in 4.2 and it deprecated
+        // using strings for constructor (and was removed in 5). Since we are
+        // trying to support versions 3, 4, and 5, this check is necessary when
+        // the command is a string.
+        if (is_string($cmd) && method_exists(Process::class, 'fromShellCommandline')) {
+            $p = Process::fromShellCommandline($cmd);
+        } else {
+            // Versions of symfony/process before 5 supported constructor with
+            // string AND array parameters.
+            $p = new Process($cmd);
+        }
 
-        $this->output->writeln($res, OutputInterface::OUTPUT_RAW | OutputInterface::VERBOSITY_VERBOSE);
+        $code = $p->run();
+        $this->output->writeln($p->getOutput(), OutputInterface::OUTPUT_RAW | OutputInterface::VERBOSITY_VERBOSE);
 
-        if ($code != 0) {
+        if (!$p->isSuccessful()) {
             $this->output->writeln("<error>Command returned exit code '{$code}'</error>");
-            $msg = sprintf("Command returned exit code '%d'\n%s", $code, implode("\n", $res));
-            throw new RuntimeException($msg, $code);
+            throw new ProcessFailedException($p);
         }
     }
 }
