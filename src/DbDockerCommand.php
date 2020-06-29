@@ -5,10 +5,11 @@ namespace Axelerant\DbDocker;
 use Composer\Command\BaseCommand;
 use GitElephant\Repository;
 use Symfony\Component\Console\Exception\InvalidOptionException;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class DbDockerCommand extends BaseCommand
 {
@@ -95,10 +96,7 @@ class DbDockerCommand extends BaseCommand
         $tag = $this->input->getOption('docker-tag');
         if (!$tag) {
             $tag = $git->getMainBranch()->getName();
-            $this->output->writeln(sprintf(
-                "<info>Docker tag not specified. Using current branch name: %s</info>",
-                $tag
-            ));
+            $this->output->writeln("<info>Docker tag not specified. Using current branch name: {$tag}</info>");
 
             // We should be using the tag 'latest' if the current branch is 'master'.
             if ($tag == 'master') {
@@ -158,10 +156,7 @@ class DbDockerCommand extends BaseCommand
             throw new InvalidOptionException("db-source can only be 'lando', 'drush', or 'file'");
         }
 
-        $this->output->writeln(sprintf(
-            "<info>Getting SQL file from source '%s'</info>",
-            $src
-        ));
+        $this->output->writeln("<info>Getting SQL file from source '{$src}'</info>");
 
         if ($src == 'file') {
             if (!$this->input->getOption('db-file')) {
@@ -218,38 +213,22 @@ class DbDockerCommand extends BaseCommand
         copy($sqlFile, $tempPath . "/dumps/db.sql");
         copy($assetPath . "zzzz-truncate-caches.sql", $tempPath . "zzzz-truncate-caches.sql");
 
-        $this->output->writeln(sprintf(
-            "<info>Building image '%s'</info>",
-            $imageId
-        ));
+        $this->output->writeln("<info>Building image '{$imageId}'</info>");
         $dockerCmd = sprintf("docker build -t %s %s", $imageId, $tempPath);
         $this->execCmd($dockerCmd);
     }
 
     protected function execCmd($cmd): void
     {
-        $this->output->writeln(
-            sprintf("<info>Running '%s'</info>", $cmd),
-            OutputInterface::VERBOSITY_VERBOSE
-        );
+        $this->output->writeln("<info>Running '{$cmd}'</info>", OutputInterface::VERBOSITY_VERBOSE);
+
         exec($cmd, $res, $code);
-        if ($code != 0) {
-            $this->output->writeln(sprintf(
-                "<error>Command returned exit code '%d'</error>",
-                $code
-            ));
-        }
-        $this->output->writeln(
-            $res,
-            OutputInterface::OUTPUT_RAW | OutputInterface::VERBOSITY_VERBOSE
-        );
+
+        $this->output->writeln($res, OutputInterface::OUTPUT_RAW | OutputInterface::VERBOSITY_VERBOSE);
 
         if ($code != 0) {
-            $msg = sprintf(
-                "Command returned exit code '%d'\n%s",
-                $code,
-                implode("\n", $res)
-            );
+            $this->output->writeln("<error>Command returned exit code '{$code}'</error>");
+            $msg = sprintf("Command returned exit code '%d'\n%s", $code, implode("\n", $res));
             throw new RuntimeException($msg, $code);
         }
     }
