@@ -191,7 +191,7 @@ class DbDockerCommand extends BaseCommand
         }
 
         // If there is a file called '.lando.yml', there is a good chance
-        // we should s
+        // that the project uses lando and we should use that for the source.
         if (file_exists('.lando.yml')) {
             // If we are running inside Lando, just use 'drush'.
             return getenv('LANDO') == 'ON' ? 'drush' : 'lando';
