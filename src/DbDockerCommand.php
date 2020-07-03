@@ -109,7 +109,7 @@ class DbDockerCommand extends BaseCommand
         }
 
         // Throws an exception if the remote not found, so we don't have to.
-        $remote = $git->getRemote($this->input->getOption('git-remote'));
+        $remote = $git->getRemote($this->input->getOption('git-remote'), false);
 
         // Determine the image name (path) from the git remote URL.
         return $this->getImagePathFromRepoUrl($remote->getFetchURL(), $tag);
