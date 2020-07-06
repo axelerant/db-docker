@@ -37,7 +37,6 @@ Options:
       --no-ansi                       Disable ANSI output
   -n, --no-interaction                Do not ask any interactive question
       --profile                       Display timing and memory usage information
-      --no-plugins                    Whether to disable plugins.
   -d, --working-dir=WORKING-DIR       If specified, use the given directory as working directory.
       --no-cache                      Prevent use of the cache
   -tag, --docker-tag[=DOCKER-TAG]     The Docker tag to build
