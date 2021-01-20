@@ -25,6 +25,11 @@ class DbDockerCommand extends BaseCommand
     protected $output;
 
     /**
+     * @var OptionsProvider
+     */
+    protected $options;
+
+    /**
      * {@inheritDoc}
      */
     protected function configure()
@@ -41,8 +46,7 @@ class DbDockerCommand extends BaseCommand
                 'git-remote',
                 'r',
                 InputOption::VALUE_OPTIONAL,
-                'The git remote to use to determine the image name',
-                'origin'
+                'The git remote to use to determine the image name'
             )
             ->addOption(
                 'db-source',
@@ -71,6 +75,7 @@ class DbDockerCommand extends BaseCommand
     {
         $this->input = $input;
         $this->output = $output;
+        $this->options = new OptionsProvider($input, $this->getComposer()->getPackage());
 
         $imageId = $this->getImageId();
 
@@ -78,7 +83,7 @@ class DbDockerCommand extends BaseCommand
 
         $this->buildImage($imageId, $sqlFile);
 
-        if (!$this->input->getOption('no-push')) {
+        if (!$this->options->getPush()) {
             $this->output->writeln("<info>Pushing image...</info>");
             $this->execCmd(['docker', 'push', $imageId]);
         } else {
@@ -93,8 +98,8 @@ class DbDockerCommand extends BaseCommand
     {
         // We can safely use `getcwd()` even in a subdirectory.
         $git = new Repository(getcwd());
-        $tag = $this->input->getOption('docker-tag');
-        if (!$tag) {
+        $tag = $this->options->getDockerTag();
+        if (!$tag || $tag == 'auto') {
             $tag = $git->getMainBranch()->getName();
             $this->output->writeln("<info>Docker tag not specified. Using current branch name: {$tag}</info>");
 
@@ -109,7 +114,7 @@ class DbDockerCommand extends BaseCommand
         }
 
         // Throws an exception if the remote not found, so we don't have to.
-        $remote = $git->getRemote($this->input->getOption('git-remote'), false);
+        $remote = $git->getRemote($this->options->getGitRemote(), false);
 
         // Determine the image name (path) from the git remote URL.
         return $this->getImagePathFromRepoUrl($remote->getFetchURL(), $tag);
@@ -151,7 +156,7 @@ class DbDockerCommand extends BaseCommand
      */
     protected function getDbFile(): string
     {
-        $src = $this->input->getOption('db-source') ?: $this->guessSource();
+        $src = $this->options->getDbSource() ?: $this->guessSource();
         if ($src != 'lando' && $src != 'drush' && $src != 'file') {
             throw new InvalidOptionException("db-source can only be 'lando', 'drush', or 'file'");
         }
@@ -181,10 +186,6 @@ class DbDockerCommand extends BaseCommand
      */
     protected function guessSource(): string
     {
-        if ($this->input->getOption('db-file')) {
-            return 'file';
-        }
-
         // If there is a file called '.lando.yml', there is a good chance
         // that the project uses lando and we should use that for the source.
         if (file_exists('.lando.yml')) {
