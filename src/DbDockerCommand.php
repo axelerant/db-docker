@@ -83,7 +83,7 @@ class DbDockerCommand extends BaseCommand
 
         $this->buildImage($imageId, $sqlFile);
 
-        if (!$this->options->getPush()) {
+        if ($this->options->getPush()) {
             $this->output->writeln("<info>Pushing image...</info>");
             $this->execCmd(['docker', 'push', $imageId]);
         } else {
