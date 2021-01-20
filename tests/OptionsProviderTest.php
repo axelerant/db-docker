@@ -38,6 +38,7 @@ class OptionsProviderTest extends TestCase
 
         $options = new OptionsProvider($this->input->reveal(), $this->package->reveal());
 
+        $this->assertSame($expected['docker-image-name'], $options->getDockerImageName());
         $this->assertSame($expected['docker-tag'], $options->getDockerTag());
         $this->assertSame($expected['git-remote'], $options->getGitRemote());
         $this->assertSame($expected['db-source'], $options->getDbSource());
@@ -58,6 +59,7 @@ class OptionsProviderTest extends TestCase
             ],
             'package' => [],
             'expected' => [
+                'docker-image-name' => 'auto',
                 'docker-tag' => 'auto',
                 'git-remote' => 'origin',
                 'db-source' => '',
@@ -74,12 +76,14 @@ class OptionsProviderTest extends TestCase
                 'no-push' => false,
             ],
             'package' => [
+                'docker-image-name' => 'test/image',
                 'docker-tag' => 'latest',
                 'git-remote' => 'upstream',
                 'db-source' => 'lando',
                 'no-push' => false,
             ],
             'expected' => [
+                'docker-image-name' => 'test/image',
                 'docker-tag' => 'latest',
                 'git-remote' => 'upstream',
                 'db-source' => 'lando',
@@ -96,12 +100,14 @@ class OptionsProviderTest extends TestCase
                 'no-push' => true,
             ],
             'package' => [
+                'docker-image-name' => 'auto',
                 'docker-tag' => 'latest',
                 'git-remote' => '',
                 'db-source' => 'lando',
                 'no-push' => false,
             ],
             'expected' => [
+                'docker-image-name' => 'auto',
                 'docker-tag' => 'production',
                 'git-remote' => 'upstream',
                 'db-source' => 'lando',

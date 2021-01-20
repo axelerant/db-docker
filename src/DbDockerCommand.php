@@ -113,22 +113,26 @@ class DbDockerCommand extends BaseCommand
             }
         }
 
-        // Throws an exception if the remote not found, so we don't have to.
-        $remote = $git->getRemote($this->options->getGitRemote(), false);
+        $imageName = $this->options->getDockerImageName();
+        if (!$imageName || $imageName == "auto") {
+            // Throws an exception if the remote not found, so we don't have to.
+            $remote = $git->getRemote($this->options->getGitRemote(), false);
+            $imageName = $this->getImageNameFromRepoUrl($remote->getFetchURL());
+            $this->output->writeln("<info>Docker image not specified. Using from git repository: {$imageName}</info>");
+        }
 
         // Determine the image name (path) from the git remote URL.
-        return $this->getImagePathFromRepoUrl($remote->getFetchURL(), $tag);
+        return sprintf("%s:%s", $imageName, $tag);
     }
 
     /**
-     * Get the complete Docker image name (with tag) from the repo URL.
+     * Determine the Docker image name from the repo URL.
      *
      * @param string $url
-     * @param string $tag
      *
      * @return string
      */
-    protected function getImagePathFromRepoUrl(string $url, string $tag): string
+    protected function getImageNameFromRepoUrl(string $url): string
     {
         if (!preg_match('/^[^@]*@([^:]*):(.*)\.git$/', $url, $matches)) {
             throw new InvalidOptionException("The specified git remote URL couldn't be parsed");
@@ -148,7 +152,7 @@ class DbDockerCommand extends BaseCommand
                 throw new InvalidOptionException("The specified git remote URL isn't supported");
         }
 
-        return sprintf("%s/%s/db:%s", $registryDomain, strtolower($path), $tag);
+        return sprintf("%s/%s/db", $registryDomain, strtolower($path));
     }
 
     /**

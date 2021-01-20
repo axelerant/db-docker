@@ -29,6 +29,7 @@ class OptionsProvider
         $this->input = $input;
         $extra = $package->getExtra();
         $this->packageConfig = ($extra['dbdocker'] ?? []) + [
+            'docker-image-name' => 'auto',
             'docker-tag' => 'auto',
             'git-remote' => '',
             'db-source' => '',
@@ -39,6 +40,11 @@ class OptionsProvider
     public function getDockerTag(): string
     {
         return $this->input->getOption('docker-tag') ?: $this->packageConfig['docker-tag'];
+    }
+
+    public function getDockerImageName(): string
+    {
+        return $this->packageConfig['docker-image-name'];
     }
 
     public function getGitRemote(): string

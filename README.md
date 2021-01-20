@@ -85,6 +85,7 @@ The plugin also supports configuration via composer.json `extra` section.
     },
     "extra": {
         "dbdocker": {
+            "docker-image-name": "auto",
             "docker-tag": "auto",
             "git-remote": "origin",
             "db-source": "",
@@ -102,7 +103,11 @@ The plugin tries to guess most values for input to correctly select the source, 
 
 ### Determining the image name
 
+The image name can be specified using the `docker-image-name` in `composer.json` as described above. If not specified (or set to `"auto"`), the image name is constructed from the git repository.
+
 The image name is determined based on the git repository's `origin` remote (overridable using the `--git-remote` option). The remote URL should be a Git URL (not a HTTP URL) of type `git@gitorious.xyz:<group>/<project>.git`. For this, it would determine the image name `registry.gitorious.xyz/<group>/<project>/db`. See the next section for the image tag.
+
+It's important to note that the image name is constructed only for Axelerant Gitlab repositories. If you want to use another Docker registry (such as Docker Hub or Quay.io), please use the option in `composer.json` to specify the proper name.
 
 ### Determining the image tag
 
