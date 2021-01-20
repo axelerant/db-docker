@@ -22,6 +22,8 @@ composer require --dev axelerant/db-docker
 
 ## Usage
 
+Options may be specified using the command line or by specifying them in the `extra` section in your `composer.json` file. See the section below on [Configuration](#configuration) for more details.
+
 ```
 $ composer db-docker --help
 
@@ -65,6 +67,34 @@ To explicitly specify a SQL file to build the image.
 ```bash
 composer db-docker --db-source=file --db-file=<filename> # The file can either be plain SQL or gzipped.
 ```
+
+## Configuration
+
+The plugin also supports configuration via composer.json `extra` section.
+
+```json
+{
+    "name": "drupal/site",
+    // ...
+    "require": {
+        // ...
+    },
+    "require-dev": {
+        // ...
+        "axelerant/db-docker": "^1.0"
+    },
+    "extra": {
+        "dbdocker": {
+            "docker-tag": "auto",
+            "git-remote": "origin",
+            "db-source": "",
+            "no-push": false
+        }
+    }
+}
+```
+
+These options work the same way as the options available via the command line. Option values specified on the command line take precedence followed by the options in the `extra` section of `composer.json`. Finally, values are guessed as described below.
 
 ## Default options
 
