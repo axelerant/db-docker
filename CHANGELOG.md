@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.0-beta9
+
+* Fix issue with the flipped behaviour of --no-push parameter
+
 ## v1.0.0-beta8
 
 * Add support for any Docker registry. Fixes #10
