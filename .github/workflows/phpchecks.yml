@@ -1,4 +1,4 @@
-name: PHP Linting and CS
+name: PHP checks
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
 
     - name: Validate composer.json and composer.lock
       run: composer validate
-      
+
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v2
@@ -35,3 +35,6 @@ jobs:
 
     - name: Run phpcs
       run: composer phpcs
+
+    - name: Run phpunit
+      run: composer test
