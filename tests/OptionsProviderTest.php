@@ -43,38 +43,48 @@ class OptionsProviderTest extends TestCase
         $this->assertSame($expected['git-remote'], $options->getGitRemote());
         $this->assertSame($expected['db-source'], $options->getDbSource());
         $this->assertSame($expected['push'], $options->getPush());
+
+        $base = $options->getDockerBaseDetails();
+        $this->assertSame($expected['docker-base']['image'], $base['image']);
+        $this->assertSame($expected['docker-base']['user'], $base['user']);
+        $this->assertSame($expected['docker-base']['password'], $base['password']);
+        $this->assertSame($expected['docker-base']['database'], $base['database']);
     }
 
     public function dataOptions(): array
     {
+        $defaultInput = [
+            'docker-tag' => '',
+            'git-remote' => '',
+            'db-source' => '',
+            'no-push' => false,
+        ];
+        $defaultExpected = [
+            'docker-image-name' => 'auto',
+            'docker-tag' => 'auto',
+            'docker-base' => [
+                'image' => 'bitnami/mariadb:10.4',
+                'user' => 'drupal8',
+                'password' => 'drupal8',
+                'database' => 'drupal8',
+            ],
+            'git-remote' => 'origin',
+            'db-source' => '',
+            'push' => true,
+        ];
+
         $cases = [];
 
         // All defaults
         $cases[] = [
-            'input' => [
-                'docker-tag' => '',
-                'git-remote' => '',
-                'db-source' => '',
-                'no-push' => false,
-            ],
+            'input' => $defaultInput,
             'package' => [],
-            'expected' => [
-                'docker-image-name' => 'auto',
-                'docker-tag' => 'auto',
-                'git-remote' => 'origin',
-                'db-source' => '',
-                'push' => true,
-            ]
+            'expected' => $defaultExpected,
         ];
 
         // Configuration in package extra.
         $cases[] = [
-            'input' => [
-                'docker-tag' => '',
-                'git-remote' => '',
-                'db-source' => '',
-                'no-push' => false,
-            ],
+            'input' => $defaultInput,
             'package' => [
                 'docker-image-name' => 'test/image',
                 'docker-tag' => 'latest',
@@ -88,7 +98,7 @@ class OptionsProviderTest extends TestCase
                 'git-remote' => 'upstream',
                 'db-source' => 'lando',
                 'push' => true,
-            ]
+            ] + $defaultExpected,
         ];
 
         // Configuration overridden on CLI.
@@ -112,7 +122,7 @@ class OptionsProviderTest extends TestCase
                 'git-remote' => 'upstream',
                 'db-source' => 'lando',
                 'push' => false,
-            ]
+            ] + $defaultExpected,
         ];
 
         // Partial configuration in composer.json.
@@ -133,7 +143,50 @@ class OptionsProviderTest extends TestCase
                 'git-remote' => 'upstream',
                 'db-source' => 'lando',
                 'push' => false,
-            ]
+            ] + $defaultExpected,
+        ];
+
+        // Configuration with docker-base.
+        $cases[] = [
+            'input' => $defaultInput,
+            'package' => [
+                'docker-base' => [
+                    'image' => 'mariadb:latest',
+                    'user' => 'mysql',
+                    'password' => 'root',
+                    'database' => 'drupal',
+                ],
+            ],
+            'expected' => [
+                'docker-base' => [
+                    'image' => 'mariadb:latest',
+                    'user' => 'mysql',
+                    'password' => 'root',
+                    'database' => 'drupal',
+                ],
+            ] + $defaultExpected,
+        ];
+
+        // Partial configuration with docker-base.
+        $cases[] = [
+            'input' => $defaultInput,
+            'package' => [
+                'docker-tag' => 'latest',
+                'docker-base' => [
+                    'image' => 'mariadb:latest',
+                ],
+                'db-source' => 'lando',
+            ],
+            'expected' => [
+                'docker-tag' => 'latest',
+                'docker-base' => [
+                    'image' => 'mariadb:latest',
+                    'user' => 'drupal8',
+                    'password' => 'drupal8',
+                    'database' => 'drupal8',
+                ],
+                'db-source' => 'lando',
+            ] + $defaultExpected,
         ];
 
         return $cases;

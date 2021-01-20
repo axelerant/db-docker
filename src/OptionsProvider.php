@@ -28,12 +28,20 @@ class OptionsProvider
     {
         $this->input = $input;
         $extra = $package->getExtra();
-        $this->packageConfig = ($extra['dbdocker'] ?? []) + [
+        $this->packageConfig = $extra['dbdocker'] ?? [];
+        $this->packageConfig += [
             'docker-image-name' => 'auto',
             'docker-tag' => 'auto',
+            'docker-base' => [],
             'git-remote' => '',
             'db-source' => '',
             'no-push' => false,
+        ];
+        $this->packageConfig['docker-base'] += [
+            'image' => 'bitnami/mariadb:10.4',
+            'user' => 'drupal8',
+            'password' => 'drupal8',
+            'database' => 'drupal8',
         ];
     }
 
@@ -45,6 +53,11 @@ class OptionsProvider
     public function getDockerImageName(): string
     {
         return $this->packageConfig['docker-image-name'];
+    }
+
+    public function getDockerBaseDetails(): array
+    {
+        return $this->packageConfig['docker-base'];
     }
 
     public function getGitRemote(): string

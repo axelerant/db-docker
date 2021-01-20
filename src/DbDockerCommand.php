@@ -81,7 +81,8 @@ class DbDockerCommand extends BaseCommand
 
         $sqlFile = $this->getDbFile();
 
-        $this->buildImage($imageId, $sqlFile);
+        $baseDetails = $this->options->getDockerBaseDetails();
+        $this->buildImage($imageId, $sqlFile, $baseDetails);
 
         if ($this->options->getPush()) {
             $this->output->writeln("<info>Pushing image...</info>");
@@ -205,8 +206,9 @@ class DbDockerCommand extends BaseCommand
      *
      * @param string $imageId
      * @param string $sqlFile
+     * @param array $baseDetails
      */
-    protected function buildImage(string $imageId, string $sqlFile): void
+    protected function buildImage(string $imageId, string $sqlFile, array $baseDetails): void
     {
         $tempDir = realpath(sys_get_temp_dir());
         $tempPath = sprintf('%s%s%s', $tempDir, DIRECTORY_SEPARATOR, sha1(uniqid())) . '/';
@@ -219,7 +221,16 @@ class DbDockerCommand extends BaseCommand
         copy($assetPath . "zzzz-truncate-caches.sql", $tempPath . "zzzz-truncate-caches.sql");
 
         $this->output->writeln("<info>Building image '{$imageId}'</info>");
-        $dockerCmd = ['docker', 'build', '-t', $imageId, $tempPath];
+        $dockerCmd = ['docker', 'build', '-t', $imageId];
+        $dockerCmd[] = '--build-arg';
+        $dockerCmd[] = sprintf("BASE_IMAGE=%s", $baseDetails['image']);
+        $dockerCmd[] = '--build-arg';
+        $dockerCmd[] = sprintf("BASE_IMAGE_USER=%s", $baseDetails['user']);
+        $dockerCmd[] = '--build-arg';
+        $dockerCmd[] = sprintf("BASE_IMAGE_PASSWORD=%s", $baseDetails['password']);
+        $dockerCmd[] = '--build-arg';
+        $dockerCmd[] = sprintf("BASE_IMAGE_DATABASE=%s", $baseDetails['database']);
+        $dockerCmd[] = $tempPath;
         $this->execCmd($dockerCmd);
     }
 
