@@ -115,6 +115,27 @@ class OptionsProviderTest extends TestCase
             ]
         ];
 
+        // Partial configuration in composer.json.
+        $cases[] = [
+            'input' => [
+                'docker-tag' => 'production',
+                'git-remote' => 'upstream',
+                'db-source' => '',
+                'no-push' => true,
+            ],
+            'package' => [
+                'docker-tag' => 'latest',
+                'db-source' => 'lando',
+            ],
+            'expected' => [
+                'docker-image-name' => 'auto',
+                'docker-tag' => 'production',
+                'git-remote' => 'upstream',
+                'db-source' => 'lando',
+                'push' => false,
+            ]
+        ];
+
         return $cases;
     }
 }
