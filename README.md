@@ -87,6 +87,12 @@ The plugin also supports configuration via composer.json `extra` section.
         "dbdocker": {
             "docker-image-name": "auto",
             "docker-tag": "auto",
+            "docker-base": {
+                "image": "bitnami/mariadb:10.4",
+                "user": "drupal8",
+                "password": "drupal8",
+                "database": "drupal8"
+            },
             "git-remote": "origin",
             "db-source": "",
             "no-push": false
@@ -96,6 +102,16 @@ The plugin also supports configuration via composer.json `extra` section.
 ```
 
 These options work the same way as the options available via the command line. Option values specified on the command line take precedence followed by the options in the `extra` section of `composer.json`. Finally, values are guessed as described below.
+
+### Image details
+
+By default, the image name and tag will be guessed using the method described below in the [Default Options](#default-options) section. You can override both of them using the `docker-image-name` and `docker-tag` settings in the configuration in `composer.json` as shown above. Additionally, you may also specify the `docker-tag` via the command line.
+
+### Base image
+
+You can use the `docker-base` configuration to specify the base image to use to build the database image. When not specified, the default image used is Bitnami's MariaDB 10.4 image with default access details which is compatible with [Lando's Drupal 8 recipe](https://docs.lando.dev/config/drupal8.html). You may override this to fit in your workflow as desired.
+
+The base image details cannot be customized from the command line. They must be specified via the `composer.json`'s extra section.
 
 ## Default options
 
