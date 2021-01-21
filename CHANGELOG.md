@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0-beta10
+
+* Warn if the image is not something we recognize. Fixes #11
+* Add support for specifying a base image. Fixes #11
+* Add a partial package config test
+
 ## v1.0.0-beta9
 
 * Fix issue with the flipped behaviour of --no-push parameter
