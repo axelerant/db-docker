@@ -82,6 +82,7 @@ class DbDockerCommand extends BaseCommand
         $sqlFile = $this->getDbFile();
 
         $baseDetails = $this->options->getDockerBaseDetails();
+        $this->verifyBaseImage($baseDetails);
         $this->buildImage($imageId, $sqlFile, $baseDetails);
 
         if ($this->options->getPush()) {
@@ -199,6 +200,27 @@ class DbDockerCommand extends BaseCommand
         }
 
         return 'drush';
+    }
+
+    /**
+     * Show warnings if the image doesn't appear to be a MariaDB image.
+     *
+     * @param array $baseImageDetails
+     */
+    protected function verifyBaseImage(array $baseImageDetails): void
+    {
+        $image = $baseImageDetails['image'];
+        if (!preg_match("/^([^:]+)(:.+)?$/", $image, $matches)) {
+            throw new \UnexpectedValueException("Cannot parse Docker image name: '{$image}.'");
+        }
+
+        $imageName = $matches[1];
+        $allowedImages = ['bitnami/mariadb', 'mariadb'];
+        if (!in_array(strtolower($imageName), $allowedImages)) {
+            $this->output->writeln(
+                "<comment>Cannot recognize image name '{$imageName}'. Use at your own risk.</comment>"
+            );
+        }
     }
 
     /**
