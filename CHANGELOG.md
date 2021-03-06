@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.0
+
+* Set a high timeout value so that docker build and push have enough time
+* Add documentation for docker-base section
+
 ## v1.0.0-beta10
 
 * Warn if the image is not something we recognize. Fixes #11
