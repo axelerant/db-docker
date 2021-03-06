@@ -276,6 +276,7 @@ class DbDockerCommand extends BaseCommand
             $p = new Process($cmd);
         }
 
+        $p->setTimeout(600);
         $code = $p->run();
         $this->output->writeln($p->getOutput(), OutputInterface::OUTPUT_RAW | OutputInterface::VERBOSITY_VERBOSE);
 
