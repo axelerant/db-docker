@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Process\ProcessBuilder;
 
 class DbDockerCommand extends BaseCommand
 {
@@ -263,16 +264,26 @@ class DbDockerCommand extends BaseCommand
             is_array($cmd) ? implode(" ", $cmd) : $cmd
         ), OutputInterface::VERBOSITY_VERBOSE);
 
-        // BC for symfony/process < 4.2.
-        // The method fromShellCommandline is new in 4.2 and it deprecated
-        // using strings for constructor (and was removed in 5). Since we are
-        // trying to support versions 3, 4, and 5, this check is necessary when
-        // the command is a string.
-        if (is_string($cmd) && method_exists(Process::class, 'fromShellCommandline')) {
+        if (is_array($cmd) && PHP_VERSION_ID < 70400 && class_exists(ProcessBuilder::class)) {
+            // Composer embeds an old version of symfony/process, and we need to
+            // target that. This version (2.8.52 as of this writing) does not
+            // support command line as an array which results in an error with
+            // proc_open before PHP 7.4. This is the case we should target.
+            // See https://github.com/axelerant/db-docker/issues/12.
+            $p = (new ProcessBuilder($cmd))->getProcess();
+        } elseif (is_string($cmd) && method_exists(Process::class, 'fromShellCommandline')) {
+            // BC for symfony/process < 4.2.
+            // The method fromShellCommandline is new in 4.2 and it deprecated
+            // using strings for constructor (and was removed in 5). Since we are
+            // trying to support a variety of versions, this check is necessary when
+            // the command is a string.
+            // This code is only left here in case composer updates its version of
+            // symfony/process one day. In most cases, this line of code will not
+            // be executed when using composer phar file.
             $p = Process::fromShellCommandline($cmd);
         } else {
-            // Versions of symfony/process before 5 supported constructor with
-            // string AND array parameters.
+            // Versions of symfony/process from 3.3 to before 5.0 supported
+            // constructor with string AND array parameters.
             $p = new Process($cmd);
         }
 
