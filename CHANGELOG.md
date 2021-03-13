@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1
+
+* Add support for symfony/process 2.8. Fixes #12
+
 ## v1.0.0
 
 * Set a high timeout value so that docker build and push have enough time
