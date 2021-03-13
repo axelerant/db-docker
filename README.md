@@ -3,12 +3,17 @@ Generate a Database as an image
 
 ## Introduction
 
-This is a tool for Axelerant specific processes. As such, you wouldn't be able to use this plugin if you cannot access Axelerant's GitLab repository.
+This tool was written for Axelerant specific processes but can be used generally by overriding certain configuration. By default, you wouldn't be able to use this plugin if you cannot access Axelerant's GitLab repository. You may use it with your own Docker image registry or even with Docker Hub.
 
 ## Prerequisites
 
-* Reasonably updated version of composer with recent version of PHP. Tested with composer 1.10.1.
+* Reasonably updated version of composer with recent version of PHP. Tested with composer 1.10.1 and composer 2+.
 * Recent version of Docker.
+
+### Optional requirements (only for default workflow)
+
+By default, this plugin generates the image with name prefixed with Axelerant's Docker registry. The below requirements apply if you don't override the image name using configuration in [composer.json](#configuration).
+
 * Ability to clone from gitorious.xyz.
 * Logged in to Axelerant's GitLab Container Registry. To verify, run `docker login registry.gitorious.xyz`. Optional if you use the `--no-push` option.
 
@@ -26,27 +31,26 @@ Options may be specified using the command line or by specifying them in the `ex
 
 ```
 $ composer db-docker --help
-
 Usage:
   db-docker [options]
 
 Options:
-      --no-push                       Set to not push the image after building
-  -h, --help                          Display this help message
-  -q, --quiet                         Do not output any message
-  -V, --version                       Display this application version
-      --ansi                          Force ANSI output
-      --no-ansi                       Disable ANSI output
-  -n, --no-interaction                Do not ask any interactive question
-      --profile                       Display timing and memory usage information
-      --no-plugins                    Whether to disable plugins.
-  -d, --working-dir=WORKING-DIR       If specified, use the given directory as working directory.
-      --no-cache                      Prevent use of the cache
-  -tag, --docker-tag[=DOCKER-TAG]     The Docker tag to build
-  -remote, --git-remote[=GIT-REMOTE]  The git remote to use to determine the image name [default: "origin"]
-  -src, --db-source[=DB-SOURCE]       Source of the database ("lando", "drush", or "file")
-  -file, --db-file[=DB-FILE]          The path to the database file (required if db-source is set to file)
-  -v|vv|vvv, --verbose                Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+  -t, --docker-tag[=DOCKER-TAG]  The Docker tag to build
+  -r, --git-remote[=GIT-REMOTE]  The git remote to use to determine the image name
+  -s, --db-source[=DB-SOURCE]    Source of the database ("lando", "drush", or "file")
+  -f, --db-file[=DB-FILE]        The path to the database file (required if db-source is set to file)
+      --no-push                  Set to not push the image after building
+  -h, --help                     Display this help message
+  -q, --quiet                    Do not output any message
+  -V, --version                  Display this application version
+      --ansi                     Force ANSI output
+      --no-ansi                  Disable ANSI output
+  -n, --no-interaction           Do not ask any interactive question
+      --profile                  Display timing and memory usage information
+      --no-plugins               Whether to disable plugins.
+  -d, --working-dir=WORKING-DIR  If specified, use the given directory as working directory.
+      --no-cache                 Prevent use of the cache
+  -v|vv|vvv, --verbose           Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
 Help:
   Generate a Docker image for the database.
