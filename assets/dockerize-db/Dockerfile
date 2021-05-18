@@ -1,9 +1,9 @@
 # This image is used to copy and install the databases.
 ARG BASE_IMAGE=bitnami/mariadb:10.4
+FROM ${BASE_IMAGE} AS build
 ARG BASE_IMAGE_USER
 ARG BASE_IMAGE_PASSWORD
 ARG BASE_IMAGE_DATABASE
-FROM ${BASE_IMAGE} AS build
 
 ENV ALLOW_EMPTY_PASSWORD=yes
 ENV MARIADB_USER=${BASE_IMAGE_USER:-drupal8}
