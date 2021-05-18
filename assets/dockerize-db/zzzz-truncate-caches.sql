@@ -40,7 +40,5 @@ BEGIN
 END
 $$
 
-USE 'drupal8';
-
 CALL truncate_tables();
 DROP PROCEDURE IF EXISTS truncate_tables;
