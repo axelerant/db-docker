@@ -92,6 +92,7 @@ The plugin also supports configuration via composer.json `extra` section.
             "docker-image-name": "auto",
             "docker-tag": "auto",
             "docker-base": {
+                "base-flavor": "bitnami",
                 "image": "bitnami/mariadb:10.4",
                 "user": "drupal8",
                 "password": "drupal8",
@@ -117,6 +118,28 @@ You can use the `docker-base` configuration to specify the base image to use to 
 
 The base image details cannot be customized from the command line. They must be specified via the `composer.json`'s extra section.
 
+### DDEV base image
+
+The defaults for `docker-base` depend on the value of `base-flavor` setting. By default, the `base-flavor` is set to `bitnami` and the defaults are set as above. However, if `base-flavor` is `ddev`, the defaults change to the following:
+
+```json
+{
+    "extra": {
+        "dbdocker": {
+            "docker-base": {
+                "base-flavor": "ddev",
+                "image": "drud/ddev-dbserver-mariadb-10.4:v1.17.0",
+                "user": "db",
+                "password": "db",
+                "database": "db"
+            }
+        }
+    }
+}
+```
+
+These are the defaults required for building database images compatible for DDEV.
+
 ## Default options
 
 The plugin tries to guess most values for input to correctly select the source, build the image, and push it.
@@ -135,13 +158,15 @@ The image tag, unless specified with the `--docker-tag` option, is assumed to be
 
 ### Determining the database source
 
-Three database sources are supported: `file`, `lando`, and `drush`. The source can be explicitly specified using the `--db-source` option. If not specified, the following rules are used to determine the source.
+These database sources are supported: `file`, `lando`, `ddev`, and `drush`. The source can be explicitly specified using the `--db-source` option. If not specified, the following rules are used to determine the source.
 * If the `--db-file` option is present, then the source is set as `file`.
 * If a file called `.lando.yml` is present, then the source is set as `lando`.
-  * As an exception to above, the plugin attempts to detect if it is running inside a lando container. If so, the source is set to `drush`.
-* If the above two conditions fail, then the source is assumed to be `drush`.
+    * As an exception to above, the plugin attempts to detect if it is running inside a lando container. If so, the source is set to `drush`.
+* If a directory called `.ddev` is present, then the source is set as `ddev`.
+    * As an exception to above, the plugin attempts to detect if it is running inside a DDEV container. If so, the source is set to `drush`.
+* If the above conditions fail, then the source is assumed to be `drush`.
 
-In case the source is `lando` or `drush`, the `drush sql:dump` command is used to obtain the SQL file. If the source is `lando`, then the drush command is executed inside of the Lando container like so: `lando drush ...`.
+In case the source is `lando`, `ddev`, or `drush`, the `drush sql:dump` command is used to obtain the SQL file. If the source is `lando` or `ddev`, then the drush command is executed inside the relevant container like so: `lando drush ...` or `ddev drush ...`.
 
 ## Reporting problems
 
