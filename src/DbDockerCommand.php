@@ -164,8 +164,9 @@ class DbDockerCommand extends BaseCommand
     protected function getDbFile(): string
     {
         $src = $this->options->getDbSource() ?: $this->guessSource();
-        if ($src != 'lando' && $src != 'drush' && $src != 'file') {
-            throw new InvalidOptionException("db-source can only be 'lando', 'drush', or 'file'");
+        $validOptions = ['lando', 'ddev', 'drush', 'file'];
+        if (!in_array($src, $validOptions)) {
+            throw new InvalidOptionException("db-source can only be one of 'lando', 'ddev', 'drush', or 'file'");
         }
 
         $this->output->writeln("<info>Getting SQL file from source '{$src}'</info>");
@@ -183,6 +184,9 @@ class DbDockerCommand extends BaseCommand
         if ($src == 'lando') {
             $drushCmd = 'lando ' . $drushCmd;
         }
+        if ($src == 'ddev') {
+            $drushCmd = 'ddev ' . $drushCmd;
+        }
 
         $this->execCmd($drushCmd);
         return $sqlFileName;
@@ -198,6 +202,12 @@ class DbDockerCommand extends BaseCommand
         if (file_exists('.lando.yml')) {
             // If we are running inside Lando, just use 'drush'.
             return getenv('LANDO') == 'ON' ? 'drush' : 'lando';
+        }
+        // Similarly, if there is a directory called `.ddev`, we are probably
+        // running ddev.
+        if (file_exists('.ddev')) {
+            // If we are running inside DDEV, just use 'drush'.
+            return getenv('IS_DDEV_PROJECT') ? 'drush' : 'ddev';
         }
 
         return 'drush';
@@ -216,7 +226,14 @@ class DbDockerCommand extends BaseCommand
         }
 
         $imageName = $matches[1];
-        $allowedImages = ['bitnami/mariadb', 'mariadb'];
+        $allowedImages = [
+            'bitnami/mariadb',
+            'mariadb',
+            'drud/ddev-dbserver-mariadb-10.2',
+            'drud/ddev-dbserver-mariadb-10.3',
+            'drud/ddev-dbserver-mariadb-10.4',
+            'drud/ddev-dbserver-mariadb-10.5',
+        ];
         if (!in_array(strtolower($imageName), $allowedImages)) {
             $this->output->writeln(
                 "<comment>Cannot recognize image name '{$imageName}'. Use at your own risk.</comment>"
@@ -235,13 +252,21 @@ class DbDockerCommand extends BaseCommand
     {
         $tempDir = realpath(sys_get_temp_dir());
         $tempPath = sprintf('%s%s%s', $tempDir, DIRECTORY_SEPARATOR, sha1(uniqid())) . '/';
-        $assetPath = realpath(__DIR__ . '/../assets/dockerize-db') . '/';
+
+        $dockerfileName = $baseDetails['base-flavor'] == 'ddev' ? 'dockerize-db-ddev' : 'dockerize-db';
+        $assetPath = realpath(__DIR__ . '/../assets/' . $dockerfileName) . '/';
 
         mkdir($tempPath);
         mkdir($tempPath . 'dumps');
         copy($assetPath . 'Dockerfile', $tempPath . 'Dockerfile');
         copy($sqlFile, $tempPath . "/dumps/db.sql");
         copy($assetPath . "zzzz-truncate-caches.sql", $tempPath . "zzzz-truncate-caches.sql");
+
+        // Little hacky but this works for now
+        if (file_exists($assetPath . 'create_init_db.sh')) {
+            copy($assetPath . 'create_init_db.sh', $tempPath . 'create_init_db.sh');
+            chmod($tempPath . 'create_init_db.sh', 0755);
+        }
 
         $this->output->writeln("<info>Building image '{$imageId}'</info>");
         $dockerCmd = ['docker', 'build', '-t', $imageId];

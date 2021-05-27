@@ -37,12 +37,24 @@ class OptionsProvider
             'db-source' => '',
             'no-push' => false,
         ];
-        $this->packageConfig['docker-base'] += [
+
+        $baseImageDetailsDefault = [
+            'base-flavor' => 'bitnami',
             'image' => 'bitnami/mariadb:10.4',
             'user' => 'drupal8',
             'password' => 'drupal8',
             'database' => 'drupal8',
         ];
+        $baseFlavor = $this->packageConfig['docker-base']['base-flavor'] ?? 'default';
+        if ($baseFlavor == 'ddev') {
+            $baseImageDetailsDefault = [
+                'image' => 'drud/ddev-dbserver-mariadb-10.4:v1.17.0',
+                'user' => 'db',
+                'password' => 'db',
+                'database' => 'db',
+            ];
+        }
+        $this->packageConfig['docker-base'] += $baseImageDetailsDefault;
     }
 
     public function getDockerTag(): string

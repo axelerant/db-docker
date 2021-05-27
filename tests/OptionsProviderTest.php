@@ -63,6 +63,7 @@ class OptionsProviderTest extends TestCase
             'docker-image-name' => 'auto',
             'docker-tag' => 'auto',
             'docker-base' => [
+                'base-flavor' => 'bitnami',
                 'image' => 'bitnami/mariadb:10.4',
                 'user' => 'drupal8',
                 'password' => 'drupal8',
@@ -178,15 +179,38 @@ class OptionsProviderTest extends TestCase
                 'db-source' => 'lando',
             ],
             'expected' => [
+                    'docker-tag' => 'latest',
+                    'docker-base' => [
+                        'image' => 'mariadb:latest',
+                        'user' => 'drupal8',
+                        'password' => 'drupal8',
+                        'database' => 'drupal8',
+                    ],
+                    'db-source' => 'lando',
+                ] + $defaultExpected,
+        ];
+
+        // Partial configuration with DDEV base flavor.
+        $cases[] = [
+            'input' => $defaultInput,
+            'package' => [
                 'docker-tag' => 'latest',
                 'docker-base' => [
-                    'image' => 'mariadb:latest',
-                    'user' => 'drupal8',
-                    'password' => 'drupal8',
-                    'database' => 'drupal8',
+                    'base-flavor' => 'ddev',
                 ],
                 'db-source' => 'lando',
-            ] + $defaultExpected,
+            ],
+            'expected' => [
+                    'docker-tag' => 'latest',
+                    'docker-base' => [
+                        'base-flavor' => 'ddev',
+                        'image' => 'drud/ddev-dbserver-mariadb-10.4:v1.17.0',
+                        'user' => 'db',
+                        'password' => 'db',
+                        'database' => 'db',
+                    ],
+                    'db-source' => 'lando',
+                ] + $defaultExpected,
         ];
 
         return $cases;
