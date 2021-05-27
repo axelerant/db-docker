@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.0
+
+* Update documentation for DDEV support
+* Fix #15: Add support for DDEV
+* Remove an invalid SQL statement in truncate caches file
+* Fix the ARG order in Dockerfile
+
 ## v1.0.1
 
 * Add support for symfony/process 2.8. Fixes #12
