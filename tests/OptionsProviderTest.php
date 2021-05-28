@@ -33,6 +33,7 @@ class OptionsProviderTest extends TestCase
         $this->input->getOption('docker-tag')->willReturn($input['docker-tag']);
         $this->input->getOption('git-remote')->willReturn($input['git-remote']);
         $this->input->getOption('db-source')->willReturn($input['db-source']);
+        $this->input->getOption('db-file')->willReturn($input['db-file']);
         $this->input->getOption('no-push')->willReturn($input['no-push']);
         $this->package->getExtra()->willReturn(['dbdocker' => $package]);
 
@@ -57,6 +58,7 @@ class OptionsProviderTest extends TestCase
             'docker-tag' => '',
             'git-remote' => '',
             'db-source' => '',
+            'db-file' => '',
             'no-push' => false,
         ];
         $defaultExpected = [
@@ -109,7 +111,7 @@ class OptionsProviderTest extends TestCase
                 'git-remote' => 'upstream',
                 'db-source' => '',
                 'no-push' => true,
-            ],
+            ] + $defaultInput,
             'package' => [
                 'docker-image-name' => 'auto',
                 'docker-tag' => 'latest',
@@ -133,7 +135,7 @@ class OptionsProviderTest extends TestCase
                 'git-remote' => 'upstream',
                 'db-source' => '',
                 'no-push' => true,
-            ],
+            ] + $defaultInput,
             'package' => [
                 'docker-tag' => 'latest',
                 'db-source' => 'lando',
@@ -144,6 +146,21 @@ class OptionsProviderTest extends TestCase
                 'git-remote' => 'upstream',
                 'db-source' => 'lando',
                 'push' => false,
+            ] + $defaultExpected,
+        ];
+
+        // Input of db-file should always set the db-source option to 'file'.
+        // See https://github.com/axelerant/db-docker/issues/17.
+        $cases[] = [
+            'input' => [
+                'db-source' => '',
+                'db-file' => 'file.sql',
+            ] + $defaultInput,
+            'package' => [
+                'db-source' => 'lando',
+            ],
+            'expected' => [
+                'db-source' => 'file',
             ] + $defaultExpected,
         ];
 

@@ -80,8 +80,9 @@ class OptionsProvider
     public function getDbSource(): string
     {
         $dbSource = $this->input->getOption('db-source') ?: $this->packageConfig['db-source'];
-        // Guess the database source if it is not specified.
-        if (!$dbSource && $this->input->getOption('db-file')) {
+        // If the db-file option is set, always set db-source to file.
+        // See https://github.com/axelerant/db-docker/issues/17.
+        if ($this->input->getOption('db-file')) {
             $dbSource = 'file';
         }
 
