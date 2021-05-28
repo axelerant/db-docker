@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1
+
+* Set db-source to file when db-file option is present. Fixes #17.
+
 ## v1.1.0
 
 * Update documentation for DDEV support
