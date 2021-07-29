@@ -53,7 +53,7 @@ class DbDockerCommand extends BaseCommand
                 'db-source',
                 's',
                 InputOption::VALUE_OPTIONAL,
-                'Source of the database ("lando", "drush", or "file")'
+                'Source of the database ("lando", "ddev", "drush", or "file")'
             )
             ->addOption(
                 'db-file',
