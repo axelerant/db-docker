@@ -151,6 +151,9 @@ class DbDockerCommand extends BaseCommand
             case 'code.axelerant.com':
                 $registryDomain = 'registry.gitorious.xyz';
                 break;
+            case 'github.com':
+                $registryDomain = 'ghcr.io';
+                break;
             default:
                 throw new InvalidOptionException("The specified git remote URL isn't supported");
         }
