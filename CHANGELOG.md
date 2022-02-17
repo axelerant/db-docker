@@ -1,5 +1,9 @@
 # Changelog
 
+## UNRELEASED
+
+* Add support for MariaDB 10.6 for DDEV
+
 ## v1.1.2
 
 * List ddev as a db-source by @skippednote in #21
