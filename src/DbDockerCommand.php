@@ -235,6 +235,7 @@ class DbDockerCommand extends BaseCommand
             'drud/ddev-dbserver-mariadb-10.3',
             'drud/ddev-dbserver-mariadb-10.4',
             'drud/ddev-dbserver-mariadb-10.5',
+            'drud/ddev-dbserver-mariadb-10.6',
         ];
         if (!in_array(strtolower($imageName), $allowedImages)) {
             $this->output->writeln(
