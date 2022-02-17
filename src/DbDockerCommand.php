@@ -14,7 +14,6 @@ use Symfony\Component\Process\ProcessBuilder;
 
 class DbDockerCommand extends BaseCommand
 {
-
     /**
      * @var InputInterface
      */

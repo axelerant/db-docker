@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class OptionsProviderTest extends TestCase
 {
-
     protected $prophet;
 
     protected $input;

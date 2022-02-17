@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 class OptionsProvider
 {
-
     /**
      * @var InputInterface
      */
