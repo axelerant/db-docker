@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.2
+
+* List ddev as a db-source by @skippednote in #21
+* Add support for GitHub URLs by @skippednote in #23
+
 ## v1.1.1
 
 * Set db-source to file when db-file option is present. Fixes #17.
