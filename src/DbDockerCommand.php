@@ -107,11 +107,11 @@ class DbDockerCommand extends BaseCommand
             $tag = $git->getMainBranch()->getName();
             $this->output->writeln("<info>Docker tag not specified. Using current branch name: {$tag}</info>");
 
-            // We should be using the tag 'latest' if the current branch is 'master'.
-            if ($tag == 'master') {
+            // We should be using the tag 'latest' if the current branch is 'master' or 'main'.
+            if ($tag == 'master' || $tag == 'main') {
                 $tag = 'latest';
                 $this->output->writeln(
-                    "<info>Using Docker tag 'latest' for branch 'master'.</info>",
+                    "<info>Using Docker tag 'latest' for branch '{$tag}'.</info>",
                     OutputInterface::VERBOSITY_VERBOSE
                 );
             }
