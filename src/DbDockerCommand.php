@@ -91,6 +91,8 @@ class DbDockerCommand extends BaseCommand
         } else {
             $this->output->writeln(sprintf("<info>To push image, run '%s'</info>", "docker push " . $imageId));
         }
+
+        return 0;
     }
 
     /**
