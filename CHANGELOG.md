@@ -2,7 +2,13 @@
 
 ## UNRELEASED
 
+* ...
+
+## v1.1.3
+
 * Add support for MariaDB 10.6 for DDEV
+* Fix #25: Return an exit code
+* Assume tag is 'latest' if the current branch is 'main'
 
 ## v1.1.2
 
